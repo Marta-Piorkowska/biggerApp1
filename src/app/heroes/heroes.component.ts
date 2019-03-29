@@ -1,28 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { Hero } from '../hero';
-import { HEROES } from '../mock-heroes';
-import { HeroService } from '../hero.service';
 
+import { Hero } from '../hero';
+import { HeroService } from '../hero.service';
 
 @Component({
   selector: 'app-heroes',
   templateUrl: './heroes.component.html',
-  styleUrls: ['./heroes.component.scss']
+  styleUrls: ['./heroes.component.css']
 })
 export class HeroesComponent implements OnInit {
-
-  // hero = 'Windstorm';
-  // po pobraniu klasy Hero z hero.ts musimy ją teraz połączyć z naszą propery hero
-  // rzeby mogło sie to wyświetlić trzeba stworzyc odpowiedni html
-  // 2 ETEP
-  // hero: Hero = {
-  //   id: 1,
-  //   name: 'Windstorm'
-  // };
-  // 3 ETAP
-  // heroes = HEROES;
-  selectedHero: Hero;
-  // 4 ETAP
   heroes: Hero[];
 
   constructor(private heroService: HeroService) { }
@@ -31,18 +17,22 @@ export class HeroesComponent implements OnInit {
     this.getHeroes();
   }
 
-  // tslint:disable-next-line:max-line-length
-  // void is a little like the opposite of any: the absence of having any type at all. You may commonly see this as the return type of functions that do not return a value:
-  onSelect(hero: Hero): void {
-    this.selectedHero = hero;
-  }
-
-  // getHeroes(): void {
-  //   this.heroes = this.heroService.getHeroes();
-  // }
-
   getHeroes(): void {
     this.heroService.getHeroes()
-        .subscribe(heroes => this.heroes = heroes);
+    .subscribe(heroes => this.heroes = heroes);
+  }
+
+  add(name: string): void {
+    name = name.trim();
+    if (!name) { return; }
+    this.heroService.addHero({ name } as Hero)
+      .subscribe(hero => {
+        this.heroes.push(hero);
+      });
+  }
+
+  delete(hero: Hero): void {
+    this.heroes = this.heroes.filter(h => h !== hero);
+    this.heroService.deleteHero(hero).subscribe();
   }
 }
